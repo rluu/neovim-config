@@ -167,6 +167,65 @@ vim.keymap.set('n', '<leader>b', ':Buffers<CR>')
 vim.keymap.set('', '<C-n>', ':NERDTreeToggle<CR>')
 vim.keymap.set('', '<leader>n', ':NERDTreeFind<CR>')
 
+------------------------------------------------------------------------------
+-- Paste the current date and time in ISO8601 format.
+------------------------------------------------------------------------------
+vim.api.nvim_set_keymap("n", "<leader>d", ":call Date()<CR>", {})
+
+------------------------------------------------------------------------------
+-- Manipulating buffers.
+------------------------------------------------------------------------------
+
+-- Buffer delete all.
+vim.api.nvim_set_keymap("n", "<leader>bda", ":%bd<CR>", {})
+
+-- Buffer delete others.
+-- This will return the cursor back to where it was.
+vim.api.nvim_set_keymap("n", "<leader>bdo", ':%bd|execute "normal <C-O>"|bd#<CR>', {})
+
+-- Buffer delete this.
+vim.api.nvim_set_keymap("n", "<leader>bdt", ":bd<CR>", {})
+
+------------------------------------------------------------------------------
+-- Copy current file name (relative/absolute) to system clipboard
+------------------------------------------------------------------------------
+
+-- Copy current file name (relative/absolute) to system clipboard (Mac version).
+if (vim.fn.has("mac") == 1 or
+    vim.fn.has("gui_macvim") == 1 or
+    vim.fn.has("gui_mac") == 1) then
+
+    -- relative path  (src/foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>cf",  ':let @*=expand("%")<CR>', {noremap = true})
+
+    -- absolute path  (/something/src/foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>cF",  ':let @*=expand("%:p")<CR>', {noremap = true})
+
+    -- filename       (foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>ct",  ':let @*=expand("%:t")<CR>', {noremap = true})
+
+    -- directory name (/something/src)
+    vim.api.nvim_set_keymap("n", "<leader>ch",  ':let @*=expand("%:p:h")<CR>', {noremap = true})
+end
+
+-- Copy current file name (relative/absolute) to system clipboard (Linux version).
+if (vim.fn.has("gui_gtk") == 1 or
+    vim.fn.has("gui_gtk2") == 1 or
+    vim.fn.has("gui_gnome") == 1 or
+    vim.fn.has("unix") == 1 ) then
+
+    -- relative path  (src/foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>cf",  ':let @+=expand("%")<CR>', {noremap = true})
+
+    -- absolute path  (/something/src/foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>cF",  ':let @+=expand("%:p")<CR>', {noremap = true})
+
+    -- filename       (foo.txt)
+    vim.api.nvim_set_keymap("n", "<leader>ct",  ':let @+=expand("%:t")<CR>', {noremap = true})
+
+    -- directory name (/something/src)
+    vim.api.nvim_set_keymap("n", "<leader>ch",  ':let @+=expand("%:p:h")<CR>', {noremap = true})
+end
 
 --------------------------------------------------------------------------------
 -- Custom config for tpope/vim-sexp-mappings-for-regular-people

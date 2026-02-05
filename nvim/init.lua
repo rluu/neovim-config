@@ -241,19 +241,51 @@ vim.g.sexp_no_word_maps = 1
 
 vim.api.nvim_create_user_command('JsonPrettify', '%!python -m json.tool', {})
 
-
+--------------------------------------------------------------------------------
+-- Remove all trailing whitespace
 --------------------------------------------------------------------------------
 
--- Remove all trailing whitespace
---
 -- Solution was adapted from:
 -- http://vi.stackexchange.com/questions/454/whats-the-simplest-way-to-strip-trailing-whitespace-from-all-lines-in-a-file
-function TrimWhitespace()
-  local save = vim.fn.winsaveview()
-  vim.cmd([[%s/\s\+$//e]])
-  vim.fn.winrestview(save)
-end
+vim.cmd(
+    [[
+    fun! TrimWhitespace()
+        let l:save = winsaveview()
+        keeppatterns %s/\s\+$//e
+        call winrestview(l:save)
+    endfun
+    ]])
+vim.cmd('command! TrimWhitespace call TrimWhitespace()')
 
+-- function TrimWhitespace()
+--   local save = vim.fn.winsaveview()
+--   vim.cmd([[%s/\s\+$//e]])
+--   vim.fn.winrestview(save)
+-- end
+
+--------------------------------------------------------------------------------
+-- Paste the current date and time in ISO8601 format.
+--------------------------------------------------------------------------------
+
+vim.cmd(
+    [==[
+    fun! Date()
+        let format = '+%Y-%m-%dT%H:%M:%SZ'
+        let cmd = '/bin/date -u ' . shellescape(format)
+        let result = substitute(system(cmd), '[\]\|[[:cntrl:]]', '', 'g')
+        call setline(line('.'), getline('.') . result)
+    endfun
+    ]==])
+vim.cmd('command! Date call Date()')
+
+--function Date()
+--    local format = '+%Y-%m-%dT%H:%M:%SZ'
+--    local cmd = '/bin/date -u ' .. vim.fn.shellescape(format)
+--    local result = vim.fn.system(cmd):gsub('[\n\r]', '')
+--    local line = vim.fn.line('.')
+--    vim.fn.setline(line, vim.fn.getline('.') .. result)
+--end
+--vim.api.nvim_create_user_command('Date', Date, {})
 
 --------------------------------------------------------------------------------
 -- LSP Configuration
